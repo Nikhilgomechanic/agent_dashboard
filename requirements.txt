@@ -1,15 +1,6 @@
 Flask==3.0.0
-smtplib==0.0.1
-ssl==1.16.0
-email==6.0.0
 mysql-connector-python==8.1.0
 plotly==5.18.0
 pandas==2.1.4
-dotenv==1.0.0
-secrets==1.0.0
-hashlib==1.0.3
-random==1.0.1
-re==3.6.0
-io==1.0.0
-datetime==5.2
-time==1.0.0
+python-dotenv==1.0.0
+
