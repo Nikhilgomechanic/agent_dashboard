@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMechanic Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1><span class="red">Go</span>Mechanic</h1>
+        <p>Your Trusted Car Care Partner</p>
+    </div>
+
+    <div class="greeting">
+        <h2>{{ greeting }}! Welcome to the <span class="red">Go</span><span class="black">Mechanic</span> Dashboard</h2>
+    </div>
+
+    <blockquote>🚘 'Transforming car service and repair for the better, one vehicle at a time!'</blockquote>
+
+    <div class="achievements">
+        <h2>🌟 Achievements</h2>
+        <ul>
+            <li>Over <span class="green">20 million+</span> satisfied customers across India.</li>
+            <li>Over <span class="purple">5 million+</span> Playstore app downloads.</li>
+            <li>Partnered with <span class="blue">2100+ certified garages</span> nationwide.</li>
+            <li>Rated <span class="yellow">4.5/5</span> by customers on major platforms.</li>
+            <li>Save Upto <span class="red">₹17500</span> annually on GoMechanic membership.</li>
+            <li><span class="purple">18388</span> users joined Miles last month.</li>
+            <li>Save Upto <span class="yellow">40%</span> for authorized car service.</li>
+        </ul>
+    </div>
+
+    <div class="key-metrics">
+        <h2>📈 Key Metrics</h2>
+        <div class="metric">
+            <span>Total Customers</span><br>
+            <span class="number">20M+</span>
+        </div>
+        <div class="metric">
+            <span>Certified Garages</span><br>
+            <span class="number">2100+</span>
+        </div>
+        <div class="metric">
+            <span>Average Rating</span><br>
+            <span class="number">4.5/5</span>
+        </div>
+    </div>
+
+    <div class="contact">
+        <h2>📞 Contact Us</h2>
+        <ul>
+            <li>Email: <a href="mailto:support@gomechanic.com">support@gomechanic.com</a></li>
+            <li>Phone: +91-999-999-9999</li>
+        </ul>
+    </div>
+</body>
+</html>

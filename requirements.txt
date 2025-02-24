@@ -1,0 +1,16 @@
+Flask
+smtplib
+ssl
+email
+mysql-connector-python
+plotly
+pandas
+dotenv
+secrets
+hashlib
+random
+re
+io
+datetime
+time
+dotenv

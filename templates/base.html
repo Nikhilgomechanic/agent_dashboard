@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GoMechanic{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <div class="logo_name"><span style="color: red; font-weight: bold;">Go</span><span style="color: white; font-weight: bold;">Mechanic</span></div>
+            <i class='bx bx-menu' id="btn"></i>
+        </div>
+        <ul class="nav-list">
+            {% for item in menu_items %}
+            <li class="{% if item.link == active_page %}active{% endif %}">
+                <a href="/{{ item.link }}">
+                    <i class='bx {{ item.icon }}'></i>
+                    <span class="links_name">{{ item.name }}</span>
+                </a>
+                <span class="tooltip">{{ item.name }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <section class="home-section">
+        <div class="text">
+            {% if active_page == 'home' %}
+                Home
+            {% else %}
+                {{ active_page|capitalize }}
+            {% endif %}
+        </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+
+    <script>
+        let btn = document.querySelector("#btn");
+        let sidebar = document.querySelector(".sidebar");
+
+        btn.onclick = function() {
+            sidebar.classList.toggle("open");
+        }
+    </script>
+</body>
+</html>

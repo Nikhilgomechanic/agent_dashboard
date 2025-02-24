@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f9;
+            font-family: 'Poppins', sans-serif;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th, .table td {
+            font-size: 0.9rem;
+        }
+        .form-select {
+            font-size: 0.85rem;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+        .btn-close {
+            font-size: 0.8rem;
+        }
+        #searchInput {
+            font-size: 0.9rem;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2>Car Management</h2>
+
+    <!-- Search Bar -->
+    <div class="d-flex justify-content-between align-items-center my-3">
+        <input type="text" id="searchInput" class="form-control w-50" placeholder="Search Car Number..." onkeyup="filterCars()">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCarModal">Add New Car</button>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Car Table -->
+    <table class="table table-striped mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Car No</th>
+                <th>Mobile No</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="carTable">
+            {% for car in cars %}
+            <tr>
+                <td>{{ car.car_no }}</td>
+                <td>{{ car.mobile_no }}</td>
+                <td>
+                    <form action="{{ url_for('update_status', car_no=car.car_no) }}" method="POST">
+                        <select name="car_status" class="form-select" onchange="this.form.submit()">
+                            <option value="Active" {% if car.car_status == 'Active' %}selected class="status-active"{% endif %}>Active</option>
+                            <option value="Inactive" {% if car.car_status == 'Inactive' %}selected class="status-inactive"{% endif %}>Inactive</option>
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Car Modal -->
+<div class="modal fade" id="addCarModal" tabindex="-1" aria-labelledby="addCarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Car</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('add_car') }}" method="POST">
+                    <div class="mb-3">
+                        <label for="car_no" class="form-label">Car Number</label>
+                        <input type="text" class="form-control" id="car_no" name="car_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile_no" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="mobile_no" name="mobile_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="car_status" class="form-label">Status</label>
+                        <select class="form-select" id="car_status" name="car_status" required>
+                            <option value="Active" class="status-active">Active</option>
+                            <option value="Inactive" class="status-inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add Car</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Search Function -->
+<script>
+    function filterCars() {
+        let input = document.getElementById("searchInput").value.toUpperCase();
+        let table = document.getElementById("carTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < tr.length; i++) {
+            let td = tr[i].getElementsByTagName("td")[0]; // First column (Car No)
+            if (td) {
+                let txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

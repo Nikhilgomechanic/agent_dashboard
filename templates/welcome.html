@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Show Data</a></li>
+            <li><a href="#">Bill Data</a></li>
+            <li><a href="#">Car Status</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Welcome to My Website</h1>
+        <p>This is the content of your welcome page.  Customize it!</p>
+        <img src="{{ url_for('static', filename='placeholder.jpg') }}" alt="Placeholder Image" width="300">
+    </div>
+</body>
+</html>

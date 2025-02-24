@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Due Service Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 30px;
+            max-width: 90%;
+        }
+        .alert-box {
+            background-color: #dc3545; /* Red color */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .table th {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+        }
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+        .report-date {
+            font-size: 14px;
+            font-style: italic;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center text-primary">Due Service Report</h2>
+        <p class="text-center report-date">Report generated on: <strong>{{ current_datetime }}</strong></p>
+
+        <!-- Red Alert Box -->
+        <div class="alert-box">
+            🚨 These cars' regular service is due! Please schedule the service date as soon as possible! 🚨
+        </div>
+
+        <div class="table-container">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Car Status</th>
+                        <th>Car Number</th>
+                        <th>City</th>
+                        <th>Car Name</th>
+                        <th>Delivered Date</th>
+                        <th>Final Service</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{ row.car_status }}</td>
+                        <td>{{ row.car_no }}</td>
+                        <td>{{ row.city }}</td>
+                        <td>{{ row.car_name }}</td>
+                        <td>{{ row.delivered_date }}</td>
+                        <td>{{ row.final_service }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
