@@ -1,0 +1,90 @@
+/* style.css */
+body {
+    font-family: 'Arial', sans-serif; /* Changed font */
+    margin: 0;
+    display: flex;
+    background-color: #f4f4f4; /* Light background color */
+    color: #333; /* Darker text color */
+}
+
+.sidebar {
+    width: 220px; /* Slightly wider sidebar */
+    background-color: #333; /* Dark sidebar */
+    color: #fff; /* White text in sidebar */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Sidebar shadow */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 15px; /* More spacing between links */
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #eee; /* Lighter link color */
+    padding: 12px; /* Increased padding */
+    display: block;
+    border-radius: 5px; /* Rounded link corners */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #555; /* Darker background on hover */
+    color: #fff; /* White text on hover */
+}
+
+.content {
+    flex: 1;
+    padding: 30px; /* Increased padding */
+    margin-left: 220px; /* Match sidebar width */
+    background-color: #fff; /* White content background */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1); /* Content shadow */
+}
+
+.content h1 {
+    color: #0056b3; /* Darker blue heading */
+    margin-bottom: 20px; /* Space below heading */
+}
+
+.content p {
+    line-height: 1.6; /* Improved readability */
+    margin-bottom: 15px;
+}
+
+.content img {
+    max-width: 80%; /* Slightly smaller image */
+    height: auto;
+    display: block;
+    margin: 30px auto;
+    border-radius: 8px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+        box-shadow: none; /* Remove shadow on small screens */
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 20px;
+        box-shadow: none; /* Remove shadow on small screens */
+    }
+
+    .content img {
+        max-width: 90%;
+        margin: 20px auto;
+    }
+}
