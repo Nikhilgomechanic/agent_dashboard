@@ -17,8 +17,6 @@ import hashlib
 import time
 from dotenv import dotenv_values
 
-
-
 app = Flask(__name__)
 
 app.secret_key = secrets.token_hex(16)
@@ -68,6 +66,8 @@ def home():
             if user and user['password'] == password:
                 session['mail_id'] = mail_id
                 session['user_name'] = user['user_name']
+                session["user_type"] = user["user_type"]
+                session["user_name"] = session["user_name"]
 
                 flash("Login Successful!", 'success')
                 return redirect(url_for('home_route'))  # Corrected redirect
@@ -254,7 +254,7 @@ def check_email():
 
 
 
-menu_items_2 = [  # Admin menu
+menu_items_1 = [  # Admin menu
     {"link": "agent_dashboard", "icon": "bx-home-circle", "name": "Dashboard"},  # Home-style dashboard
     {"link": "show_data", "icon": "bx-show", "name": "Show Data"},  # Eye icon for visibility
     {"link": "owner_insert", "icon": "bx-user-plus", "name": "Owner Insert"},  # User add icon
@@ -264,7 +264,7 @@ menu_items_2 = [  # Admin menu
     {"link": "logout", "icon": "bx-power-off", "name": "Logout"},  # Power-off icon for logout
 ]
 
-menu_items_1 = [  # Regular user menu
+menu_items_2 = [  # Regular user menu
     {"link": "agent_dashboard", "icon": "bx-home-circle", "name": "Dashboard"},
     {"link": "show_data", "icon": "bx-show", "name": "Show Data"},
     {"link": "owner_insert", "icon": "bx-user-plus", "name": "Owner Insert"},
@@ -276,34 +276,35 @@ menu_items_1 = [  # Regular user menu
 @app.route("/home")
 def home_route():
     if 'mail_id' not in session:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
 
     user_name = session.get('user_name')
-    user_type = session.get('user_type', 'user').lower()
-    menu_items = menu_items_2 if user_type == 'admin' else menu_items_1
+    user_type = session.get('user_type')
+    menu_items = menu_items_1 if user_type == 'admin' else menu_items_2
 
     return render_template("home.html", menu_items=menu_items, active_page="home", user_name=user_name)
+
+
 
 @app.route("/<page>")
 def page(page):
     if 'mail_id' not in session:
-        return redirect(url_for('home'))
+        return redirect(url_for('login'))
 
-    user_type = session.get('user_type', 'user').lower()
+    user_type = session.get('user_type')
     menu_items = menu_items_1 if user_type == 'admin' else menu_items_2
 
     if page in [item['link'] for item in menu_items]:
         return render_template(f"{page}.html", menu_items=menu_items, active_page=page)
 
-    return abort(404)  # Proper 404 handling
+    return abort(404)
 
 
-@app.route('/welcome') # If you still need this route
+@app.route('/welcome')
 def welcome():
     if 'mail_id' not in session:
         return redirect(url_for('home'))
-    return render_template("welcome.html")  # Corrected function name to match template
-
+    return render_template("welcome.html")
 
 
 # Owner Insert Routes
@@ -790,3 +791,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
