@@ -441,7 +441,7 @@ def show_data():
                                car_no_selected="", columns=[], data=[])
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/bill', methods=['GET', 'POST'])
 def bill_data():
     try:
         # Fetch data from the database
