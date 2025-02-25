@@ -280,7 +280,7 @@ def home_route():
 
     user_name = session.get('user_name')
     user_type = session.get('user_type', 'user').lower()
-    menu_items = menu_items_1 if user_type == 'admin' else menu_items_2
+    menu_items = menu_items_2 if user_type == 'admin' else menu_items_1
 
     return render_template("home.html", menu_items=menu_items, active_page="home", user_name=user_name)
 
