@@ -134,9 +134,14 @@
             </form>
         </div>
 
+        <!-- Search Bar -->
+        <div class="mt-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search table...">
+        </div>
+
         <!-- Table -->
         <div class="table-responsive mt-3">
-            <table class="table table-bordered text-center">
+            <table class="table table-bordered text-center" id="dataTable">
                 <thead>
                     {% if data %}
                     <tr>
@@ -171,37 +176,42 @@
             <button id="nextPage">Next</button>
         </div>
 
-        <!-- Download Button -->
         <div class="download-button mt-2">
             <form method="POST">
                 <button type="submit" class="btn btn-success">Download as Excel</button>
             </form>
         </div>
-    </div>
 
-    <!-- JavaScript for Search & Pagination -->
-    <script>
-        let currentPage = 1;
-        const rowsPerPage = 10;
-        const rows = document.querySelectorAll(".table tbody tr");
-        const totalRows = rows.length;
-        const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-        function showPage(page) {
-            const start = (page - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            rows.forEach((row, index) => {
-                row.style.display = index >= start && index < end ? "" : "none";
+        <script>
+            document.getElementById("searchInput").addEventListener("input", function() {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll(".table tbody tr");
+                rows.forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none";
+                });
             });
-            document.getElementById("pageIndicator").textContent = `Page ${page} of ${totalPages}`;
-            document.getElementById("prevPage").classList.toggle("disabled", page === 1);
-            document.getElementById("nextPage").classList.toggle("disabled", page === totalPages);
-        }
 
-        document.getElementById("prevPage").addEventListener("click", () => { if (currentPage > 1) showPage(--currentPage); });
-        document.getElementById("nextPage").addEventListener("click", () => { if (currentPage < totalPages) showPage(++currentPage); });
-        showPage(1);
-    </script>
+            let currentPage = 1;
+            const rowsPerPage = 10;
+            const rows = document.querySelectorAll(".table tbody tr");
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            function showPage(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.forEach((row, index) => {
+                    row.style.display = index >= start && index < end ? "" : "none";
+                });
+                document.getElementById("pageIndicator").textContent = `Page ${page} of ${totalPages}`;
+                document.getElementById("prevPage").classList.toggle("disabled", page === 1);
+                document.getElementById("nextPage").classList.toggle("disabled", page === totalPages);
+            }
+
+            document.getElementById("prevPage").addEventListener("click", () => { if (currentPage > 1) showPage(--currentPage); });
+            document.getElementById("nextPage").addEventListener("click", () => { if (currentPage < totalPages) showPage(++currentPage); });
+            showPage(1);
+        </script>
+    </div>
 </body>
-
 </html>
