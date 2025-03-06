@@ -87,6 +87,7 @@
                 <th>Car No</th>
                 <th>Mobile No</th>
                 <th>Status</th>
+                <th>Driver Name</th>
             </tr>
         </thead>
         <tbody id="carTable">
@@ -94,6 +95,7 @@
             <tr>
                 <td>{{ car.car_no }}</td>
                 <td>{{ car.mobile_no }}</td>
+                <td>{{ car.driver_name }}</td>
                 <td>
                     <form action="{{ url_for('update_status', car_no=car.car_no) }}" method="POST">
                         <select name="car_status" class="form-select" onchange="this.form.submit()">
@@ -125,6 +127,10 @@
                     <div class="mb-3">
                         <label for="mobile_no" class="form-label">Mobile Number</label>
                         <input type="text" class="form-control" id="mobile_no" name="mobile_no" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="diver_name" class="form-label">Driver Name</label>
+                        <input type="text" class="form-control" id="diver_name" name="diver_name" required>
                     </div>
                     <div class="mb-3">
                         <label for="car_status" class="form-label">Status</label>
