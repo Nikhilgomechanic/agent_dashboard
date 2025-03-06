@@ -310,18 +310,19 @@ def welcome():
 # Owner Insert Routes
 @app.route('/owner_insert', methods=['GET', 'POST'])
 def owner_insert():
-    cars = get_cars()  # Fetch cars for display
+    cars = get_cars() 
     if request.method == 'POST':
         car_no = request.form.get('car_no')
         mobile_no = request.form.get('mobile_no')
         car_status = request.form.get('car_status')
+        driver_name = request.form.get('driver_name')
 
         if car_no and mobile_no and car_status:
             try:
                 conn = connect_db()
                 if conn:
                     with conn.cursor() as cursor:
-                        cursor.execute("INSERT INTO owner_insert (car_no, mobile_no, car_status) VALUES (%s, %s, %s)", (car_no, mobile_no, car_status))
+                        cursor.execute("INSERT INTO owner_insert (car_no, mobile_no, car_status, driver_name) VALUES (%s, %s, %s, %s)", (car_no, mobile_no, car_status, driver_name))
                         conn.commit()
                     conn.close()
                     flash("Car added successfully!", 'success')
@@ -329,11 +330,11 @@ def owner_insert():
                 flash("Car number already exists!", 'error')
             except Exception as e:
                 e_owner = e
-                flash(f"An error occurred: {e_owner}", 'error') # Display a general error message
+                flash(f"An error occurred: {e_owner}", 'error')
         else:
             flash("All fields are required!", 'warning')
 
-        return redirect(url_for('owner_insert'))  # Redirect after POST
+        return redirect(url_for('owner_insert')) 
 
     return render_template('owner_insert.html', cars=cars)
 
