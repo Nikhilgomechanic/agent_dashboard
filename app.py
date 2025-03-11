@@ -44,36 +44,7 @@ def connect_db():
         return conn
     except mysql.connector.Error as err:
         print(f"Database connection error: {err}")
-        return None  # Return None if connection fails
-
-
-
-# Routes
-@app.route('/', methods=['POST', "GET"])
-def home():
-    if request.method == 'POST':
-        mail_id = request.form.get('mail_id', '').strip().lower()
-        password = request.form.get('password', '').strip()
-
-        conn = connect_db()
-        if conn:
-            with conn.cursor(dictionary=True) as cursor:
-                cursor.execute("SELECT mail_id, password, user_name, user_type FROM user_pass WHERE mail_id = %s;", (mail_id,))
-                user = cursor.fetchone()
-                print("Queried User:", user)
-            conn.close()
-
-            if user and user['password'] == password:
-                session['mail_id'] = mail_id
-                session['user_name'] = user['user_name']
-                session["user_type"] = user["user_type"]
-                session["user_name"] = session["user_name"]
-
-                flash("Login Successful!", 'success')
-                return redirect(url_for('home_route'))  # Corrected redirect
-            else:
-                flash("Invalid credentials, try again.", 'error')
-    return render_template('login.html')
+        return None
 
 
 
@@ -250,8 +221,40 @@ def check_email():
 
     return jsonify({"exists": exists})
 
+# Routes
+@app.route('/', methods=['POST', "GET"])
+def home():
+    if request.method == 'POST':
+        mail_id = request.form.get('mail_id', '').strip().lower()
+        password = request.form.get('password', '').strip()
 
+        conn = connect_db()
+        if conn:
+            with conn.cursor(dictionary=True) as cursor:
+                cursor.execute("SELECT mail_id, password, user_name, user_type FROM user_pass WHERE mail_id = %s;", (mail_id,))
+                user = cursor.fetchone()
+            conn.close()
 
+            if user and user['password'] == password:
+                session['mail_id'] = mail_id
+                session['user_name'] = user['user_name']
+                session["user_type"] = user["user_type"]
+                session["user_name"] = session["user_name"]
+
+                flash("Login Successful!", 'success')
+                return redirect(url_for('home_route'))  # Corrected redirect
+            else:
+                flash("Invalid credentials, try again.", 'error')
+                return redirect(url_for('wrong_page'))
+    return render_template('login.html')
+
+@app.route('/wrong')
+def wrong_page():
+    return render_template('wrong_id_pass.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
 
 
 menu_items_1 = [  # Admin menu
@@ -267,7 +270,6 @@ menu_items_1 = [  # Admin menu
 menu_items_2 = [  # Regular user menu
     {"link": "agent_dashboard", "icon": "bx-home-circle", "name": "Dashboard"},
     {"link": "show_data", "icon": "bx-show", "name": "Show Data"},
-    {"link": "owner_insert", "icon": "bx-user-plus", "name": "Owner Insert"},
     {"link": "invoice_download", "icon": "bx-download", "name": "Invoice Download"},
     {"link": "due_service", "icon": "bx-time", "name": "Due Service Report"},
     {"link": "logout", "icon": "bx-power-off", "name": "Logout"},
@@ -285,7 +287,6 @@ def home_route():
     return render_template("home.html", menu_items=menu_items, active_page="home", user_name=user_name)
 
 
-
 @app.route("/<page>")
 def page(page):
     if 'mail_id' not in session:
@@ -296,9 +297,7 @@ def page(page):
 
     if page in [item['link'] for item in menu_items]:
         return render_template(f"{page}.html", menu_items=menu_items, active_page=page)
-
     return abort(404)
-
 
 @app.route('/welcome')
 def welcome():
@@ -306,11 +305,10 @@ def welcome():
         return redirect(url_for('home'))
     return render_template("welcome.html")
 
-
 # Owner Insert Routes
 @app.route('/owner_insert', methods=['GET', 'POST'])
 def owner_insert():
-    cars = get_cars() 
+    cars = get_cars()
     if request.method == 'POST':
         car_no = request.form.get('car_no')
         mobile_no = request.form.get('mobile_no')
@@ -334,20 +332,25 @@ def owner_insert():
         else:
             flash("All fields are required!", 'warning')
 
-        return redirect(url_for('owner_insert')) 
+        return redirect(url_for('owner_insert'))
 
     return render_template('owner_insert.html', cars=cars)
 
 
+@app.route('/cars', methods=['GET'])
+def get_cars():
+    car_no = request.args.get('car_no')  # Get car_no from request parameters
+    if not car_no:
+        return []  # Return an empty list instead of jsonify([])
 
-def get_cars():  # Function to fetch cars
     conn = connect_db()
     if conn:
         with conn.cursor(dictionary=True) as cursor:
-            cursor.execute("SELECT * FROM owner_insert;")
+            cursor.execute("SELECT * FROM owner_insert WHERE car_no = %s", (car_no,))
             cars = cursor.fetchall()
         conn.close()
-        return cars
+        return cars  # Return the list directly (not jsonify)
+
     return []
 
 
@@ -624,7 +627,7 @@ def agent_dashboard():
                 if chart_type == 'pie':
                     fig = px.pie(values=data, names=labels, title=title,
                                  color_discrete_sequence=colors,
-                                 hole=0.5)  # Donut effect for a modern look
+                                 hole=0.5)
 
                     fig.update_traces(
                         textinfo='percent+label', pull=[0.05] * len(labels),
@@ -674,8 +677,8 @@ def agent_dashboard():
                 return pio.to_html(fig, full_html=False)
 
             # Create Pie Charts with Reduced Size
-            car_status_chart = create_plotly_chart('pie', [active_cars, inactive_cars, unknown_cars],
-                                                   ['Active', 'Inactive', 'Unknown'], 'Car Status Distribution')
+            car_status_chart = create_plotly_chart('pie', [active_cars, inactive_cars],
+                                                   ['Active', 'Inactive'], 'Car Status Distribution')
             repeat_customer_chart = create_plotly_chart('pie', [repeat_customers, unique_cars - repeat_customers],
                                                         ['Repeat Customers', 'New Customers'], 'Repeat Customer Ratio')
             final_service_chart = create_plotly_chart('pie', final_service_counts.values, final_service_counts.index,
@@ -731,16 +734,26 @@ def add_car():
 
 @app.route('/update_status/<car_no>', methods=['POST'])
 def update_status(car_no):
+    print(f"Received Car No: {car_no}")
+    print(f"Form Data: {request.form}")  # Debugging: Check form data received
+
     new_status = request.form.get('car_status')
 
     if new_status:
         with connect_db() as conn:
             cursor = conn.cursor()
-            cursor.execute("SET SQL_SAFE_UPDATES = 0;")
-            cursor.execute("UPDATE owner_insert SET car_status = %s WHERE car_no = %s;", (new_status, car_no))
-            cursor.execute("SET SQL_SAFE_UPDATES = 1;")
-            conn.commit()
-            flash("Car status updated successfully!", 'success')
+
+            # Debugging: Check if the car exists
+            cursor.execute("SELECT car_status FROM owner_insert WHERE car_no = %s;", (car_no,))
+            existing_record = cursor.fetchall()
+            print(f"Existing Record: {existing_record}")  # Debugging
+
+            if existing_record:
+                cursor.execute("UPDATE owner_insert SET car_status = %s WHERE car_no = %s;", (new_status, car_no))
+                conn.commit()
+                flash("Car status updated successfully!", 'success')
+            else:
+                flash("Car not found!", 'danger')
 
     return redirect(url_for('owner_insert'))
 
@@ -792,4 +805,3 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
