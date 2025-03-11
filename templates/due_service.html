@@ -57,9 +57,29 @@
         .table tbody tr:hover {
             background-color: #e9ecef;
         }
+        /* Styling for the back button */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Go Back Button -->
+    <button class="back-button" onclick="window.location.href='/home'">Go Back</button>
+
     <div class="container">
         <h2>Due Service Report</h2>
         <p class="report-date">Report generated on: <strong>{{ current_datetime }}</strong></p>
