@@ -41,9 +41,27 @@
         .download-btn:hover {
             background-color: #218838;
         }
+        /* Styling for the back button */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <button class="back-button" onclick="window.location.href='/home'">Go Back</button>
+
     <div class="container">
         <h2 class="text-center mb-4">Download Invoice</h2>
         <form method="POST" action="/invoice_download" class="search-bar">
