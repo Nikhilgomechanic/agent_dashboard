@@ -17,70 +17,48 @@
             font-weight: 700;
             font-size: 1.8rem;
         }
-        .status-active {
-            background-color: #d4edda;
-            color: #155724;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
-        .status-inactive {
-            background-color: #f8d7da;
-            color: #721c24;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
         .table {
             background-color: white;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .table th, .table td {
-            font-size: 0.9rem;
-        }
         .form-select {
             font-size: 0.85rem;
         }
-        .btn-primary {
+        /* Styling for the back button */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
             background-color: #007bff;
+            color: white;
             border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
         }
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-        .btn-close {
-            font-size: 0.8rem;
-        }
-        #searchInput {
-            font-size: 0.9rem;
-            padding: 8px;
+        .back-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
+<!-- Go Back Button -->
+<button class="back-button" onclick="window.location.href='/home'">Go Back</button>
 
 <div class="container mt-4">
     <h2>Car Management</h2>
 
-    <!-- Search Bar -->
     <div class="d-flex justify-content-between align-items-center my-3">
-        <input type="text" id="searchInput" class="form-control w-50" placeholder="Search Car Number..." onkeyup="filterCars()">
+        <div class="input-group w-50">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search Car Number...">
+            <button class="btn btn-primary" id="searchButton">Search</button>
+        </div>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCarModal">Add New Car</button>
     </div>
 
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <!-- Car Table -->
     <table class="table table-striped mt-3">
         <thead class="table-dark">
             <tr>
@@ -99,8 +77,9 @@
                 <td>
                     <form action="{{ url_for('update_status', car_no=car.car_no) }}" method="POST">
                         <select name="car_status" class="form-select" onchange="this.form.submit()">
-                            <option value="Active" {% if car.car_status == 'Active' %}selected class="status-active"{% endif %}>Active</option>
-                            <option value="Inactive" {% if car.car_status == 'Inactive' %}selected class="status-inactive"{% endif %}>Inactive</option>
+                            {% for status in ['Active', 'Inactive'] %}
+                            <option value="{{ status }}" {{ 'selected' if car.car_status == status else '' }}>{{ status }}</option>
+                            {% endfor %}
                         </select>
                     </form>
                 </td>
@@ -129,14 +108,14 @@
                         <input type="text" class="form-control" id="mobile_no" name="mobile_no" required>
                     </div>
                     <div class="mb-3">
-                        <label for="diver_name" class="form-label">Driver Name</label>
-                        <input type="text" class="form-control" id="diver_name" name="diver_name" required>
+                        <label for="driver_name" class="form-label">Driver Name</label>
+                        <input type="text" class="form-control" id="driver_name" name="driver_name" required>
                     </div>
                     <div class="mb-3">
                         <label for="car_status" class="form-label">Status</label>
                         <select class="form-select" id="car_status" name="car_status" required>
-                            <option value="Active" class="status-active">Active</option>
-                            <option value="Inactive" class="status-inactive">Inactive</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-success">Add Car</button>
@@ -146,21 +125,42 @@
     </div>
 </div>
 
-<!-- JavaScript for Search Function -->
 <script>
-    function filterCars() {
-        let input = document.getElementById("searchInput").value.toUpperCase();
-        let table = document.getElementById("carTable");
-        let tr = table.getElementsByTagName("tr");
-
-        for (let i = 0; i < tr.length; i++) {
-            let td = tr[i].getElementsByTagName("td")[0]; // First column (Car No)
-            if (td) {
-                let txtValue = td.textContent || td.innerText;
-                tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
-            }
+    document.getElementById("searchButton").addEventListener("click", function () {
+        let carNo = document.getElementById("searchInput").value.trim();
+        if (carNo === "") {
+            alert("Please enter a car number to search.");
+            return;
         }
-    }
+        fetch(`/cars?car_no=${carNo}`)
+            .then(response => response.json())
+            .then(data => {
+                let tableBody = document.getElementById("carTable");
+                tableBody.innerHTML = "";
+                if (data.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='4' class='text-center'>No car found</td></tr>";
+                } else {
+                    data.forEach(car => {
+                        let row = `
+                            <tr>
+                                <td>${car.car_no}</td>
+                                <td>${car.mobile_no}</td>
+                                <td>${car.driver_name}</td>
+                                <td>
+                                    <form action="/update_status/${car.car_no}" method="POST">
+                                        <select name="car_status" class="form-select" onchange="this.form.submit()">
+                                            <option value="Active" ${car.car_status === 'Active' ? 'selected' : ''}>Active</option>
+                                            <option value="Inactive" ${car.car_status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                        </select>
+                                    </form>
+                                </td>
+                            </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                }
+            })
+            .catch(error => console.error("Error fetching data:", error));
+    });
 </script>
 
 </body>
