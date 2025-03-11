@@ -73,9 +73,26 @@
             height: 300px;
             margin: auto;
         }
+        /* Styling for the back button */
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
+    <button class="back-button" onclick="window.location.href='/home'">Go Back</button>
     <div class="container mt-4">
         <div class="dashboard-container">
             <h2>📊 Agent Dashboard</h2>
